@@ -49,6 +49,25 @@
   renderCountdown();
 
   /* ========== 渲染油猴脚本表格 ========== */
+    function fmtDate(s) {
+    if (!s || s === '-') return '-';
+    const str = String(s).trim();
+
+    // 1) 含 T 的 ISO 直接取前 10 位
+    if (str.includes('T') && str.length >= 10) {
+      return str.slice(0, 10);
+    }
+
+    // 2) 试着当日期解析
+    const d = new Date(str);
+    if (!isNaN(d)) return d.toISOString().slice(0, 10);
+
+    // 3) 兜底：如果像 "2025-09-21 03:05:49" 也取前 10 位
+    if (/^\d{4}-\d{2}-\d{2}/.test(str)) return str.slice(0, 10);
+
+    return str; // 实在不行就原样返回
+  }
+
    async function loadScriptInfo() {
     try {
       const res = await fetch("./data/warsoul.json?t=" + Date.now());
@@ -78,13 +97,5 @@
     }
   }
 
-  function fmtDate(s) {
-  if (!s || s === '-') return '-';
-  try {
-    const d = new Date(s);
-    if (!isNaN(d)) return d.toISOString().slice(0, 10); // 输出 2025-09-21
-  } catch {}
-  return (s + '').slice(0, 10);
-}
   loadScriptInfo();
 })();
