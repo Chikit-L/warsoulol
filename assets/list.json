@@ -1,0 +1,10 @@
+[
+  {
+    "name": "WarSoul Battle Monitor",
+    "gf_id": 549786,
+    "page": "https://greasyfork.org/zh-CN/scripts/549786-warsoul-battle-monitor",
+    "install_official": "https://www.tampermonkey.net/script_installation.php#url=https://update.greasyfork.org/scripts/549786/WarSoul%20Battle%20Monitor.user.js",
+    "install_mirror": "https://www.tampermonkey.net/script_installation.php#url=https://update.gf.qytechs.cn/scripts/549786/WarSoul%20Battle%20Monitor.user.js",
+    "desc": "根据怪物血量下降速度，预测是否能按时击败怪物"
+  }
+]

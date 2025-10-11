@@ -1,4 +1,4 @@
-// scripts/fetch-greasyfork.js
+// ESM
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -6,60 +6,90 @@ import { fileURLToPath } from 'node:url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const OUTPUT = path.resolve(__dirname, '../data/warsoul.json');
-const PAGE = 'https://greasyfork.org/zh-CN/scripts/549786-warsoul-battle-monitor';
-const API_PRIMARY = 'https://api.greasyfork.org/scripts/549786.json';
-const API_MIRROR = 'https://api.greasyfork.org.cn/scripts/549786.json';
+// 输入与输出
+const LIST = path.resolve(__dirname, './list.json');
+const OUT  = path.resolve(__dirname, '../data/warsoul.json');
 
-async function getFromApi(url) {
-  const res = await fetch(url, { headers: { 'accept': 'application/json' } });
-  if (!res.ok) throw new Error(`Bad status ${res.status}`);
+// API 主站 & 镜像
+const apiUrl = (id) => `https://api.greasyfork.org/scripts/${id}.json`;
+const apiUrlMirror = (id) => `https://api.greasyfork.org.cn/scripts/${id}.json`;
+
+async function fetchJson(url) {
+  const res = await fetch(url, { headers: { accept: 'application/json' } });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
 }
 
-async function getFromHtml(url) {
+async function fetchHtml(url) {
   const res = await fetch(url);
-  if (!res.ok) throw new Error(`Bad status ${res.status}`);
-  const html = await res.text();
-  // 极简解析：从“版本”和“更新日期”字段附近抽取（中文界面）
-  const verMatch = html.match(/版本\s*([0-9A-Za-z_.-]+)/);
-  const updMatch = html.match(/更新日期[^0-9]*([0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{4}\/[0-9]{1,2}\/[0-9]{1,2})/);
-  return {
-    version: verMatch ? verMatch[1] : undefined,
-    updated_at: updMatch ? updMatch[1] : undefined,
-  };
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.text();
+}
+
+// 简单 HTML 兜底解析（中文页）
+function parseFromHtml(html) {
+  const ver = html.match(/版本\s*([0-9A-Za-z_.-]+)/)?.[1];
+  const upd = html.match(/更新日期[^0-9]*([0-9]{4}[-/][0-9]{1,2}[-/][0-9]{1,2})/)?.[1];
+  return { version: ver, updated_at: upd };
+}
+
+// 统一取字段，尽量容错
+function pickVersionAndDate(j) {
+  const version =
+    j?.version ||
+    j?.code_version ||
+    j?.version_number ||
+    j?.versions?.[0]?.version ||
+    '-';
+
+  const updated_at =
+    j?.versions?.[0]?.created_at ||
+    j?.updated ||
+    j?.last_updated_at ||
+    j?.last_updated ||
+    null;
+
+  return { version, updated_at };
+}
+
+async function fetchOne(item) {
+  const id = item.gf_id;
+  // 1) API 主站
+  try {
+    const j = await fetchJson(apiUrl(id));
+    const { version, updated_at } = pickVersionAndDate(j);
+    return { ...item, version, updated_at, source: 'api' };
+  } catch {}
+
+  // 2) API 镜像
+  try {
+    const j = await fetchJson(apiUrlMirror(id));
+    const { version, updated_at } = pickVersionAndDate(j);
+    return { ...item, version, updated_at, source: 'api-mirror' };
+  } catch {}
+
+  // 3) 兜底：解析脚本页面 HTML
+  try {
+    const html = await fetchHtml(item.page);
+    const { version, updated_at } = parseFromHtml(html);
+    return { ...item, version: version || '-', updated_at: updated_at || '-', source: 'html' };
+  } catch (e) {
+    return { ...item, version: '-', updated_at: '-', source: 'error' };
+  }
 }
 
 async function main() {
-  let version, updated_at;
-  try {
-    const data = await getFromApi(API_PRIMARY);
-    version = data?.version || data?.code_version || data?.version_number;
-    updated_at = data?.versions?.[0]?.created_at || data?.updated || data?.last_updated_at;
-  } catch (e1) {
-    try {
-      const data = await getFromApi(API_MIRROR);
-      version = data?.version || data?.code_version || data?.version_number;
-      updated_at = data?.versions?.[0]?.created_at || data?.updated || data?.last_updated_at;
-    } catch (e2) {
-      const data = await getFromHtml(PAGE);
-      version = data.version; updated_at = data.updated_at;
-    }
-  }
+  const list = JSON.parse(await fs.readFile(LIST, 'utf-8'));
+  const results = [];
+  for (const it of list) results.push(await fetchOne(it));
 
   const payload = {
-    version: version || '-',
-    updated_at: updated_at || '-',
     fetched_at: new Date().toISOString(),
-    source: version ? 'api' : 'html'
+    items: results
   };
 
-  await fs.mkdir(path.dirname(OUTPUT), { recursive: true });
-  await fs.writeFile(OUTPUT, JSON.stringify(payload, null, 2), 'utf-8');
-  console.log('Saved:', payload);
+  await fs.mkdir(path.dirname(OUT), { recursive: true });
+  await fs.writeFile(OUT, JSON.stringify(payload, null, 2), 'utf-8');
+  console.log('Saved:', OUT, payload.items.length, 'items');
 }
-
-main().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+main().catch((e) => { console.error(e); process.exit(1); });

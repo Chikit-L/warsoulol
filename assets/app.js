@@ -49,29 +49,31 @@
   renderCountdown();
 
   /* ========== 渲染油猴脚本表格 ========== */
-  async function loadScriptInfo() {
+   async function loadScriptInfo() {
     try {
-      const res = await fetch(DATA_URL);
-      if (!res.ok) throw new Error("无法读取 warsoul.json");
-      const info = await res.json();
+      const res = await fetch("./data/warsoul.json?t=" + Date.now());
+      const data = await res.json();
+      const items = Array.isArray(data.items) ? data.items : [];
 
-      const rowHtml = `
-        <tr>
-          <td><a href="https://greasyfork.org/zh-CN/scripts/549786-warsoul-battle-monitor" target="_blank" rel="noopener">WarSoul Battle Monitor</a></td>
-          <td>${info.version || "-"}</td>
-          <td>${info.updated_at || "-"}</td>
-          <td><a href="https://www.tampermonkey.net/script_installation.php#url=https://update.greasyfork.org/scripts/549786/WarSoul%20Battle%20Monitor.user.js" target="_blank" rel="noopener">点击安装</a></td>
-          <td><a href="https://www.tampermonkey.net/script_installation.php#url=https://update.gf.qytechs.cn/scripts/549786/WarSoul%20Battle%20Monitor.user.js" target="_blank" rel="noopener">点击安装</a></td>
-          <td>根据怪物血量下降速度，预测是否能按时击败怪物</td>
-        </tr>`;
+      const rows = items.map(x => {
+        const version = x.version || "-";
+        const updated = x.updated_at || "-";
+        return `
+          <tr>
+            <td><a href="${x.page}" target="_blank" rel="noopener">${x.name}</a></td>
+            <td>${version}</td>
+            <td>${updated}</td>
+            <td><a href="${x.install_official}" target="_blank" rel="noopener">点击安装</a></td>
+            <td><a href="${x.install_mirror}" target="_blank" rel="noopener">点击安装</a></td>
+            <td>${x.desc || "-"}</td>
+          </tr>`;
+      }).join("");
 
-      document.getElementById("script-rows").innerHTML = rowHtml;
-    } catch (err) {
-      console.error(err);
-      document.getElementById("script-rows").innerHTML = `
-        <tr>
-          <td colspan="6">无法加载 GreasyFork 数据，请稍后刷新页面。</td>
-        </tr>`;
+      document.getElementById("script-rows").innerHTML =
+        rows || `<tr><td colspan="6">暂无数据</td></tr>`;
+    } catch (e) {
+      document.getElementById("script-rows").innerHTML =
+        `<tr><td colspan="6">无法加载 GreasyFork 数据</td></tr>`;
     }
   }
 
