@@ -1,4 +1,4 @@
-// ESM
+// ESM —— 仅解析 HTML，不走任何 API
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -9,95 +9,102 @@ const __dirname = path.dirname(__filename);
 const LIST = path.resolve(__dirname, './list.json');
 const OUT  = path.resolve(__dirname, '../data/warsoul.json');
 
-// ① 本地化 JSON（来自 <link rel="alternate" type="application/json" ...>）
-const localizedApi = (id) =>
-  `https://api.greasyfork.org/zh-CN/scripts/${id}-dummy.json`.replace('-dummy', `/${id}-warsoul-battle-monitor`);
-// 注意：上面这个 URL 需要脚本的 slug，通用写法用下面 safer 版本：
-const localizedApiSafe = (id) => `https://api.greasyfork.org/zh-CN/scripts/${id}.json`;
+// 统一请求头，尽量拿到与你浏览器一致的 DOM（含 zh-CN）
+const REQ_HEADERS = {
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119 Safari/537.36',
+  'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8',
+  'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+};
 
-// ② 通用 API
-const apiUrl = (id) => `https://api.greasyfork.org/scripts/${id}.json`;
-
-// ③ HTML 页
-// 在 list.json 里我们会放 page: "https://greasyfork.org/zh-CN/scripts/<id>-<slug>"
-async function fetchJson(url) {
-  const res = await fetch(url, { headers: { accept: 'application/json' } });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return res.json();
-}
 async function fetchHtml(url) {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const res = await fetch(url, { headers: REQ_HEADERS });
+  if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
   return res.text();
 }
 
-// 从 JSON 里尽量“捞”出版本&时间（兼容不同字段）
-function pickFromJson(j) {
+// 从“脚本信息页”提取版本与更新时间（按你贴的结构）
+function pickFromInfoHtml(html) {
+  // 版本：<dd class="script-show-version"><span>1.0</span>
   const version =
-    j?.version ||
-    j?.code_version ||
-    j?.version_number ||
-    j?.versions?.[0]?.version ||
-    '-';
+    html.match(/<dd[^>]*class="script-show-version"[^>]*>\s*<span>([^<]+)<\/span>/i)?.[1] ||
+    html.match(/<dt[^>]*>\s*版本\s*<\/dt>\s*<dd[^>]*>\s*<span>([^<]+)<\/span>/i)?.[1] ||
+    null;
 
+  // 更新时间：<dd class="script-show-updated-date"><span><relative-time datetime="...">
   const updated_at =
-    j?.updated_at ||
-    j?.updated_date ||
-    j?.last_updated ||
-    j?.last_updated_at ||
-    j?.updated ||
-    j?.versions?.[0]?.created_at ||
+    html.match(/<dd[^>]*class="script-show-updated-date"[^>]*>[\s\S]*?relative-time[^>]*datetime="([^"]+)"/i)?.[1] ||
+    html.match(/<dt[^>]*>\s*更新于?\s*<\/dt>[\s\S]*?datetime="([^"]+)"/i)?.[1] ||
     null;
 
   return { version, updated_at };
 }
 
-// 从 HTML 精准提取（按你贴的结构）
-function pickFromHtml(html) {
-  // 版本：<dd class="script-show-version"><span>1.0</span>
-  const ver = html.match(/<dd[^>]*class="script-show-version"[^>]*>\s*<span>([^<]+)<\/span>/i)?.[1];
+// 从“历史版本页”兜底抓最近一次更新时间：取第一处 <time datetime>
+function pickFromVersionsHtml(html) {
+  const updated_at = html.match(/<time[^>]*datetime="([^"]+)"/i)?.[1] || null;
+  return { updated_at };
+}
 
-  // 更新时间：<dd class="script-show-updated-date"><span><relative-time datetime="...">
-  const upd = html.match(/<dd[^>]*class="script-show-updated-date"[^>]*>[\s\S]*?relative-time[^>]*datetime="([^"]+)"/i)?.[1];
+function normalizeItem(item) {
+  return {
+    ...item,
+    version: item.version || '-',
+    updated_at: item.updated_at || '-',
+    source: item.source || 'html',
+  };
+}
 
-  return { version: ver || '-', updated_at: upd || '-' };
+function toVersionsUrl(infoUrl) {
+  try {
+    const u = new URL(infoUrl);
+    if (!u.pathname.endsWith('/versions')) {
+      u.pathname = u.pathname.replace(/\/+$/, '') + '/versions';
+    }
+    return u.toString();
+  } catch {
+    return infoUrl;
+  }
 }
 
 async function fetchOne(item) {
-  const id = item.gf_id;
+  let version = null;
+  let updated_at = null;
 
-  // ① 先打本地化 JSON（更贴近你现在打开的 zh-CN 页）
-  try {
-    const j = await fetchJson(localizedApiSafe(id));
-    const { version, updated_at } = pickFromJson(j);
-    return { ...item, version: version || '-', updated_at: updated_at || '-', source: 'api-localized' };
-  } catch {}
-
-  // ② 通用 API
-  try {
-    const j = await fetchJson(apiUrl(id));
-    const { version, updated_at } = pickFromJson(j);
-    return { ...item, version: version || '-', updated_at: updated_at || '-', source: 'api' };
-  } catch {}
-
-  // ③ 解析 HTML（按你贴的 DOM 结构）
+  // ① 信息页
   try {
     const html = await fetchHtml(item.page);
-    const { version, updated_at } = pickFromHtml(html);
-    return { ...item, version, updated_at, source: 'html' };
-  } catch {}
+    const p = pickFromInfoHtml(html);
+    version = p.version ?? version;
+    updated_at = p.updated_at ?? updated_at;
+  } catch (e) {
+    // 忽略，继续尝试兜底
+  }
 
-  // 失败兜底
-  return { ...item, version: '-', updated_at: '-', source: 'error' };
+  // ② 若更新时间还没拿到，去“历史版本页”兜底
+  if (!updated_at) {
+    try {
+      const versionsHtml = await fetchHtml(toVersionsUrl(item.page));
+      const p2 = pickFromVersionsHtml(versionsHtml);
+      updated_at = p2.updated_at ?? updated_at;
+    } catch (e) {
+      // 忽略
+    }
+  }
+
+  return normalizeItem({ ...item, version, updated_at });
 }
 
 async function main() {
-  const list = JSON.parse(await fs.readFile(LIST, 'utf-8'));
+  const listRaw = await fs.readFile(LIST, 'utf-8');
+  const list = JSON.parse(listRaw);
   const results = [];
-  for (const it of list) results.push(await fetchOne(it));
+  for (const it of list) {
+    results.push(await fetchOne(it));
+  }
   const payload = { fetched_at: new Date().toISOString(), items: results };
   await fs.mkdir(path.dirname(OUT), { recursive: true });
   await fs.writeFile(OUT, JSON.stringify(payload, null, 2), 'utf-8');
-  console.log('Saved:', OUT, payload.items.length, 'items');
+  console.log('Saved:', OUT, results.length, 'items');
 }
+
 main().catch((e) => { console.error(e); process.exit(1); });

@@ -57,7 +57,8 @@
 
       const rows = items.map(x => {
         const version = x.version || "-";
-        const updated = x.updated_at || "-";
+        const updated = fmtDate(x.updated_at);
+
         return `
           <tr>
             <td><a href="${x.page}" target="_blank" rel="noopener">${x.name}</a></td>
@@ -77,5 +78,13 @@
     }
   }
 
+  function fmtDate(s) {
+  if (!s || s === '-') return '-';
+  try {
+    const d = new Date(s);
+    if (!isNaN(d)) return d.toISOString().slice(0, 10); // 输出 2025-09-21
+  } catch {}
+  return (s + '').slice(0, 10);
+}
   loadScriptInfo();
 })();
