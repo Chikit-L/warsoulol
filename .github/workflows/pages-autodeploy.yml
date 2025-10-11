@@ -1,0 +1,54 @@
+name: Auto Fetch & Deploy Pages
+
+on:
+  # 每天北京时间 00:07 触发（UTC=16:07）
+  schedule:
+    - cron: "7 16 * * *"
+  # 手动触发 & 每次 push 也会触发
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # 1) 抓取 GreasyFork 数据并写入 data/warsoul.json
+      # 你的 scripts/fetch-greasyfork.js 是 ESM（import ...）
+      # 用 import(...) 的方式执行，避免 package.json 配置
+      - name: Fetch GreasyFork meta
+        run: node -e "import('./scripts/fetch-greasyfork.js')"
+
+      # 2) 上传静态站点产物（此处就是仓库根目录）
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
