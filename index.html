@@ -1,88 +1,256 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>战魂觉醒OL</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./assets/style.css" />
-</head>
-<body>
-  <main class="container">
-    <header class="hero">
-      <h1>欢迎来到 <span class="accent">战魂觉醒OL</span></h1>
-      <a class="primary" href="https://aring.cc/awakening-of-war-soul-ol/" target="_blank" rel="noopener">进入游戏</a>
-    </header>
 
-    <section class="timers">
-      <div class="card">
-        <h2>副本刷新倒计时</h2>
-        <p class="hint">（每周日零点更新）</p>
-        <div id="weekly-countdown" class="countdown">-- 天 -- 小时 -- 分钟 -- 秒钟</div>
-      </div>
-      <div class="card">
-        <h2>大荒野刷新倒计时</h2>
-        <p class="hint">（每月月初零点刷新）</p>
-        <div id="monthly-countdown" class="countdown">-- 天 -- 小时 -- 分钟 -- 秒钟</div>
-      </div>
-    </section>
+  <style>
+    /* ===== 全局背景设置 ===== */
+  body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      font-family: "Microsoft YaHei", sans-serif;
+      color: #fff;
+      background-color: #0b0b0b; /* 页面底色 */
+      background-image: url('./assets/bg.png'); /* ✅ 改成 PNG 格式 */
+      background-repeat: no-repeat;
+      background-position: center center; /* 图案居中 */
+      background-attachment: fixed;       /* 不随滚动 */
+      background-size: auto;              /* 不拉伸，不缩放 */
+      position: relative;
+    }
 
-  <!-- 🆕 商户价格监控 -->
-  <section class="notice">
-    <p style="
+    /* 半透明遮罩层，调节整体亮度 */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.3); /* 透明度越高越暗，可调 0.1~0.6 */
+      z-index: -1;
+    }
+
+    /* 内容区域样式 */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2em;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 0.2em;
+    }
+
+    h2 {
+      font-size: 1.6em;
+      margin-top: 1.2em;
+      color: #ffd166;
+    }
+
+    .countdown {
+      font-size: 1.4em;
+      margin: 0.5em 0;
+      color: #fff;
+    }
+
+    .hint {
+      font-size: 0.9em;
+      color: #ccc;
+    }
+
+    /* ===== 商户价格监控 ===== */
+    .notice {
+      margin-top: 2em;
+      margin-bottom: 1.5em;
+    }
+    .notice-title {
       font-size: 1.6em;
       font-weight: 700;
       margin-bottom: 0.4em;
-    ">
-      <a href="https://chikit-l.github.io/WarSoul_Monitor/" 
-        target="_blank" 
-        rel="noopener"
-        style="color: #0056b3; text-decoration: underline; text-underline-offset: 4px;">
-        商户价格监控
-      </a>
-    </p>
-      <p style="font-size: 0.95em; color: #ffffff; margin: 0.3em 0 0.8em;">
-    提供商户长期历史价格，并给出操作建议。
-    </p>
-    <p class="howto" style="margin-top: 0; color: #444;">
-      注意：页面所提供信息仅供参考。由于 GitHub Actions 更新存在一定延迟，在参考信息时请注意页面的更新时间。
-    </p>
-  </section>
+    }
+    .notice-title a {
+      color: #5cb6ff;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+    .notice-title a:hover {
+      color: #ffd166;
+    }
+    .notice-white {
+      font-size: 0.95em;
+      color: #ffffff;
+      margin-top: 0.3em;
+      margin-bottom: 0.8em;
+    }
+    .howto {
+      font-size: 0.95em;
+      color: #ddd;
+      margin-top: 0;
+    }
 
+    /* ===== 表格样式 ===== */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1em;
+      font-size: 0.95em;
+    }
 
+    th, td {
+      border: 1px solid #555;
+      padding: 8px;
+    }
 
+    th {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: #ffd166;
+    }
+
+    a {
+      color: #5cb6ff;
+      text-decoration: underline;
+    }
+
+    a:hover {
+      color: #ffd166;
+    }
+
+    footer {
+      margin-top: 3em;
+      font-size: 0.8em;
+      color: #999;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>欢迎来到 战魂觉醒OL</h1>
+    <p><a href="https://aring.cc/awakening-of-war-soul-ol/" target="_blank">进入游戏</a></p>
+
+    <div class="card">
+      <h2>副本刷新倒计时</h2>
+      <p class="hint">（每周日零点更新）</p>
+      <div id="weekly-countdown" class="countdown">-- 天 -- 小时 -- 分钟 -- 秒钟</div>
+    </div>
+
+    <div class="card">
+      <h2>大荒野刷新倒计时</h2>
+      <p class="hint">（每月月初零点刷新）</p>
+      <div id="monthly-countdown" class="countdown">-- 天 -- 小时 -- 分钟 -- 秒钟</div>
+    </div>
+
+    <!-- 🆕 商户价格监控区 -->
+    <section class="notice">
+      <p class="notice-title">
+        <a href="https://chikit-l.github.io/WarSoul_Monitor/" target="_blank" rel="noopener">
+          商户价格监控
+        </a>
+      </p>
+      <p class="notice-white">
+        （这里写你的白字内容，例如：本页面为战魂觉醒系列辅助工具展示平台）
+      </p>
+      <p class="howto">
+        注意：页面所提供信息仅供参考。由于 GitHub Actions 更新存在一定延迟，在采纳信息时请注意页面的更新时间。
+      </p>
+    </section>
+
+    <!-- ===== 油猴脚本表格 ===== -->
     <section class="gm">
       <h2>油猴脚本</h2>
-      <p class="howto">如何使用？
+      <p class="howto">
+        如何使用？
         <a href="https://blog.csdn.net/qq_39201211/article/details/146199386" target="_blank" rel="noopener">点击查看教程</a>
       </p>
 
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>脚本名称</th>
-              <th>版本号</th>
-              <th>更新时间</th>
-              <th>官方安装</th>
-              <th>镜像链接</th>
-              <th>说明</th>
-            </tr>
-          </thead>
-          <tbody id="script-rows">
-            <!-- 由 app.js 渲染（读取 /data/warsoul.json） -->
-          </tbody>
-        </table>
-      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>脚本名称</th>
+            <th>版本号</th>
+            <th>更新时间</th>
+            <th>官方安装</th>
+            <th>镜像链接</th>
+            <th>说明</th>
+          </tr>
+        </thead>
+        <tbody id="script-rows">
+          <tr><td colspan="6">加载中...</td></tr>
+        </tbody>
+      </table>
     </section>
 
-    <footer class="foot">
-      <span>© <span id="year"></span> 战魂觉醒OL</span>
+    <footer>
+      <p>© <span id="year"></span> 战魂觉醒OL | 页面数据来自 GreasyFork</p>
     </footer>
-  </main>
+  </div>
 
-  <script src="./assets/app.js"></script>
+  <script>
+    // === 倒计时逻辑 ===
+    const $ = (sel) => document.querySelector(sel);
+    const weeklyEl = $("#weekly-countdown");
+    const monthlyEl = $("#monthly-countdown");
+    const yearEl = $("#year");
+    yearEl.textContent = new Date().getFullYear();
+
+    function nextSundayMidnight(now = new Date()) {
+      const d = new Date(now);
+      const day = d.getDay();
+      const daysUntilSunday = (7 - day) % 7 || 7;
+      const target = new Date(d.getFullYear(), d.getMonth(), d.getDate() + daysUntilSunday, 0, 0, 0, 0);
+      return target;
+    }
+
+    function nextMonthFirstMidnight(now = new Date()) {
+      const d = new Date(now);
+      const target = new Date(d.getFullYear(), d.getMonth() + 1, 1, 0, 0, 0, 0);
+      return target;
+    }
+
+    function fmt(ms) {
+      if (ms <= 0) return { d: 0, h: 0, m: 0, s: 0 };
+      const s = Math.floor(ms / 1000);
+      const d = Math.floor(s / (3600 * 24));
+      const h = Math.floor((s % (3600 * 24)) / 3600);
+      const m = Math.floor((s % 3600) / 60);
+      const sec = s % 60;
+      return { d, h, m, s: sec };
+    }
+
+    function renderCountdown() {
+      const now = new Date();
+      const w = fmt(nextSundayMidnight(now) - now);
+      const m = fmt(nextMonthFirstMidnight(now) - now);
+      weeklyEl.textContent = `${w.d}天 ${w.h}小时 ${w.m}分钟 ${w.s}秒钟`;
+      monthlyEl.textContent = `${m.d}天 ${m.h}小时 ${m.m}分钟 ${m.s}秒钟`;
+    }
+    setInterval(renderCountdown, 1000);
+    renderCountdown();
+
+    // === 动态加载油猴脚本数据 ===
+    async function loadScriptInfo() {
+      try {
+        const res = await fetch("./data/warsoul.json?t=" + Date.now());
+        const data = await res.json();
+        const items = Array.isArray(data.items) ? data.items : [];
+        const rows = items.map(x => `
+          <tr>
+            <td><a href="${x.page}" target="_blank">${x.name}</a></td>
+            <td>${x.version || '-'}</td>
+            <td>${(x.updated_at || '-').slice(0, 10)}</td>
+            <td><a href="${x.install_official}" target="_blank">点击安装</a></td>
+            <td><a href="${x.install_mirror}" target="_blank">点击安装</a></td>
+            <td>${x.desc || '-'}</td>
+          </tr>`).join("");
+        document.getElementById("script-rows").innerHTML = rows || `<tr><td colspan="6">暂无数据</td></tr>`;
+      } catch {
+        document.getElementById("script-rows").innerHTML = `<tr><td colspan="6">无法加载 GreasyFork 数据</td></tr>`;
+      }
+    }
+    loadScriptInfo();
+  </script>
 </body>
 </html>
