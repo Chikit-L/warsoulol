@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>战魂觉醒OL</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./assets/style.css" />
+</head>
+<body>
+  <main class="container">
+    <header class="hero">
+      <h1>欢迎来到 <span class="accent">战魂觉醒OL</span></h1>
+      <a class="primary" href="https://aring.cc/awakening-of-war-soul-ol/" target="_blank" rel="noopener">进入游戏</a>
+    </header>
+
+    <section class="timers">
+      <div class="card">
+        <h2>副本刷新倒计时</h2>
+        <p class="hint">（每周日零点更新）</p>
+        <div id="weekly-countdown" class="countdown">-- 天 -- 小时 -- 分钟 -- 秒钟</div>
+      </div>
+      <div class="card">
+        <h2>大荒野刷新倒计时</h2>
+        <p class="hint">（每月月初零点刷新）</p>
+        <div id="monthly-countdown" class="countdown">-- 天 -- 小时 -- 分钟 -- 秒钟</div>
+      </div>
+    </section>
+
+    <section class="gm">
+      <h2>油猴脚本</h2>
+      <p class="howto">如何使用？
+        <a href="https://blog.csdn.net/qq_39201211/article/details/146199386" target="_blank" rel="noopener">点击查看教程</a>
+      </p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>脚本名称</th>
+              <th>版本号</th>
+              <th>更新时间</th>
+              <th>官方安装</th>
+              <th>镜像链接</th>
+              <th>说明</th>
+            </tr>
+          </thead>
+          <tbody id="script-rows">
+            <!-- 由 app.js 渲染（读取 /data/warsoul.json） -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <span>© <span id="year"></span> 战魂觉醒OL</span>
+    </footer>
+  </main>
+
+  <script src="./assets/app.js"></script>
+</body>
+</html>
