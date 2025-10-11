@@ -1,4 +1,10 @@
 [
+    {
+    "name": "WarSoul Helper",
+    "gf_id": 549785,
+    "page": "https://greasyfork.org/zh-CN/scripts/548340-warsoul-helper",
+    "desc": "为WarSoul游戏中特定装备添加星形图标"
+  }
   {
     "name": "WarSoul Battle Monitor",
     "gf_id": 549786,
@@ -6,5 +12,17 @@
     "install_official": "https://www.tampermonkey.net/script_installation.php#url=https://update.greasyfork.org/scripts/549786/WarSoul%20Battle%20Monitor.user.js",
     "install_mirror": "https://www.tampermonkey.net/script_installation.php#url=https://update.gf.qytechs.cn/scripts/549786/WarSoul%20Battle%20Monitor.user.js",
     "desc": "根据怪物血量下降速度，预测是否能按时击败怪物"
+  }
+  {
+    "name": "WarSoul AutoBattle",
+    "gf_id": 549785,
+    "page": "https://greasyfork.org/zh-CN/scripts/549785-warsoul-autobattle",
+    "desc": "为战魂觉醒游戏组队添加自动战斗功能，等待队员加入后自动开始战斗"
+  }
+  {
+    "name": "WarSoul Auto-Equip Assistant ",
+    "gf_id": 550606,
+    "page": "https://greasyfork.org/zh-CN/scripts/550606-warsoul-auto-equip-assistant",
+    "desc": "根据怪物血量自动换装，支持自定义装备套路（仅副本生效）"
   }
 ]
