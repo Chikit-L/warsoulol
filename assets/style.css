@@ -59,43 +59,48 @@ body {
 .table-wrap a:hover { text-decoration: underline; }
 .foot { text-align: center; color: var(--muted); margin: 20px 0 10px; font-size: 13px; }
 
-/* 让列宽设置更可控 */
-.table-wrap table {
-  table-layout: fixed;   /* 关键：按列宽分配 */
+/* 强制按列宽分配 */
+.table-wrap table.gm-table { 
+  table-layout: fixed !important; 
+  width: 100% !important;
 }
 
-/* 列宽分配（可按需微调）*/
-.table-wrap th:nth-child(1),
-.table-wrap td:nth-child(1) { /* 脚本名称 */
-  width: 26%;
+/* 名称 */
+.table-wrap table.gm-table th:nth-child(1),
+.table-wrap table.gm-table td:nth-child(1) {
+  width: 26% !important;
+  overflow: hidden; text-overflow: ellipsis;
 }
 
-.table-wrap th:nth-child(2),
-.table-wrap td:nth-child(2) { /* 版本号 */
-  width: 8ch;               /* 足够放 1.2.3 这类 */
-  white-space: nowrap;
+/* 版本号（不换行） */
+.table-wrap table.gm-table th:nth-child(2),
+.table-wrap table.gm-table td:nth-child(2) {
+  width: 8ch !important;
+  white-space: nowrap !important;
 }
 
-.table-wrap th:nth-child(3),
-.table-wrap td:nth-child(3) { /* 更新时间 */
-  width: 11ch;              /* 2025-09-30 */
-  white-space: nowrap;      /* 不换行 */
+/* 日期（不换行） */
+.table-wrap table.gm-table th:nth-child(3),
+.table-wrap table.gm-table td:nth-child(3) {
+  width: 11ch !important;      /* 例如 2025-09-30 */
+  white-space: nowrap !important;
 }
 
-.table-wrap th:nth-child(4),
-.table-wrap td:nth-child(4),
-.table-wrap th:nth-child(5),
-.table-wrap td:nth-child(5) { /* 官方安装 / 镜像链接 */
-  width: 9ch;               /* “点击安装”刚好一行 */
-  white-space: nowrap;      /* 不换行 */
+/* 官方安装 / 镜像链接（不换行） */
+.table-wrap table.gm-table th:nth-child(4),
+.table-wrap table.gm-table td:nth-child(4),
+.table-wrap table.gm-table th:nth-child(5),
+.table-wrap table.gm-table td:nth-child(5) {
+  width: 9ch !important;       /* “点击安装” */
+  white-space: nowrap !important;
 }
 
 /* 说明列：收窄一些 */
-.table-wrap th:nth-child(6),
-.table-wrap td:nth-child(6) { /* 说明 */
-  width: 28%;
-  /* 如果想两行省略号，可取消注释下面三行 */
-  /* overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 2; -webkit-box-orient: vertical; */
+.table-wrap table.gm-table th:nth-child(6),
+.table-wrap table.gm-table td:nth-child(6) {
+  width: 28% !important;
+  overflow: hidden; text-overflow: ellipsis;
 }
+
+/* 防止链接自身换行 */
+.table-wrap table.gm-table a { white-space: nowrap !important; }
