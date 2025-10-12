@@ -104,3 +104,26 @@ body {
 
 /* 防止链接自身换行 */
 .table-wrap table.gm-table a { white-space: nowrap !important; }
+
+/* 让包裹层可以横向滚动，并启用惯性滚动（iOS 有效果） */
+.table-wrap {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 表格至少这么宽，超出就出现横向滚动条 */
+.gm-table {
+  min-width: 760px; /* 可按需调成 720/800/900 */
+}
+
+/* 避免小屏上文字自行换行把表格撑得难看 */
+.gm-table th,
+.gm-table td {
+  white-space: nowrap;
+}
+
+/* 小屏下禁用粘性表头，避免和横向滚动冲突 */
+@media (max-width: 600px) {
+  .table-wrap thead th { position: static; }
+}
