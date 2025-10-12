@@ -48,3 +48,21 @@
 
 ---
 
+---
+
+## 🧰 本地调试
+
+如需在本地查看网页，可执行：
+
+```bash
+# 克隆项目
+git clone https://github.com/你的用户名/warsoulol.git
+cd warsoulol
+
+# 启动本地静态服务器（任选其一）
+npx serve .
+# 或
+python3 -m http.server
+打开浏览器访问 http://localhost:8000 即可。
+
+```
