@@ -7,132 +7,135 @@
   --primary: #22c55e;
   --border: #1f2937;
 }
+
 * { box-sizing: border-box; }
 html, body { height: 100%; }
+
 body {
   margin: 0;
   font-family: Inter, system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
   background: radial-gradient(1200px 600px at 10% 0%, #0f172a 0, #0b0f17 60%);
   color: var(--text);
 }
-/* 合并后的 .card：既有外观，也有居中排布 */
+
+/* ========== 卡片（倒计时） ========== */
 .card {
   /* 外观 */
   background: linear-gradient(180deg, rgba(96,165,250,.07), rgba(96,165,250,.02));
   border: 1px solid var(--border);
   border-radius: 16px;
   padding: 18px 16px;
-
   /* 居中排布 */
   display: flex;
   flex-direction: column;
-  align-items: center;      /* 水平居中 */
-  justify-content: center;  /* 垂直居中 */
-  min-height: 120px;        /* 给点高度，才能看出垂直居中效果 */
+  align-items: center;     /* 水平居中 */
+  justify-content: center; /* 垂直居中 */
+  min-height: 120px;
 }
-
-/* 标题/提示/数字文本居中 */
 .card h2,
 .card .hint,
-.card .countdown {
-  text-align: center;
-}
+.card .countdown { text-align: center; }
+.card h2 { margin: 6px 0 4px; font-size: 20px; }
+.hint { margin: 0 0 12px; color: var(--muted); font-size: 13px; }
+.countdown { font-size: 22px; font-weight: 800; letter-spacing: .4px; }
 
+/* ========== 布局与标题 ========== */
 .container { max-width: 960px; margin: 0 auto; padding: 24px; }
 .hero { text-align: center; margin: 40px 0 28px; }
 .hero h1 { font-size: 44px; letter-spacing: .5px; margin: 0 0 16px; }
 .hero .accent { color: var(--accent); }
-.hero .primary { display: inline-block; background: var(--primary); color: #03130a; padding: 12px 18px; border-radius: 12px; font-weight: 700; text-decoration: none; box-shadow: 0 10px 30px rgba(34,197,94,.25); }
+.hero .primary {
+  display: inline-block; background: var(--primary); color: #03130a;
+  padding: 12px 18px; border-radius: 12px; font-weight: 700;
+  text-decoration: none; box-shadow: 0 10px 30px rgba(34,197,94,.25);
+}
+
+/* 倒计时网格 */
 .timers { display: grid; grid-template-columns: 1fr; gap: 16px; }
 @media (min-width: 720px) { .timers { grid-template-columns: 1fr 1fr; } }
-.card { background: linear-gradient(180deg, rgba(96,165,250,.07), rgba(96,165,250,.02)); border: 1px solid var(--border); border-radius: 16px; padding: 18px 16px; }
-.card h2 { margin: 6px 0 4px; font-size: 20px; }
-.hint { margin: 0 0 12px; color: var(--muted); font-size: 13px; }
-.countdown { font-size: 22px; font-weight: 800; letter-spacing: .4px; }
+
+/* ========== 油猴脚本表格 ========== */
 .gm h2 { margin: 26px 0 8px; }
 .howto { margin: 2px 0 12px; color: var(--muted); }
-.table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; }
-.table-wrap table { width: 100%; border-collapse: collapse; }
-.table-wrap th, .table-wrap td { padding: 12px 10px; border-bottom: 1px solid var(--border); text-align: left; }
-.table-wrap thead th { color: #cbd5e1; font-weight: 600; background: #0f172a; position: sticky; top: 0; }
-.table-wrap a { color: var(--accent); text-decoration: none; }
-.table-wrap a:hover { text-decoration: underline; }
-.foot { text-align: center; color: var(--muted); margin: 20px 0 10px; font-size: 13px; }
 
-/* 强制按列宽分配 */
-.table-wrap table.gm-table { 
-  table-layout: fixed !important; 
-  width: 100% !important;
-}
-
-/* 名称 */
-.table-wrap table.gm-table th:nth-child(1),
-.table-wrap table.gm-table td:nth-child(1) {
-  width: 26% !important;
-  overflow: hidden; text-overflow: ellipsis;
-}
-
-/* 版本号（不换行） */
-.table-wrap table.gm-table th:nth-child(2),
-.table-wrap table.gm-table td:nth-child(2) {
-  width: 8ch !important;
-  white-space: nowrap !important;
-}
-
-/* 日期（不换行） */
-.table-wrap table.gm-table th:nth-child(3),
-.table-wrap table.gm-table td:nth-child(3) {
-  width: 11ch !important;      /* 例如 2025-09-30 */
-  white-space: nowrap !important;
-}
-
-/* 官方安装 / 镜像链接（不换行） */
-.table-wrap table.gm-table th:nth-child(4),
-.table-wrap table.gm-table td:nth-child(4),
-.table-wrap table.gm-table th:nth-child(5),
-.table-wrap table.gm-table td:nth-child(5) {
-  width: 9ch !important;       /* “点击安装” */
-  white-space: nowrap !important;
-}
-
-/* 说明列：收窄一些 */
-.table-wrap table.gm-table th:nth-child(6),
-.table-wrap table.gm-table td:nth-child(6) {
-  width: 28% !important;
-  overflow: hidden; text-overflow: ellipsis;
-}
-
-/* 防止链接自身换行 */
-.table-wrap table.gm-table a { white-space: nowrap !important; }
-
-/* 让包裹层可以横向滚动，并启用惯性滚动（iOS 有效果） */
+/* 容器可横向滚动（移动端用手指滑动） */
 .table-wrap {
   overflow-x: auto;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--border);
+  border-radius: 12px;
 }
 
-/* 表格至少这么宽，超出就出现横向滚动条 */
-.gm-table {
-  min-width: 760px; /* 可按需调成 720/800/900 */
+/* 表格基础 */
+.table-wrap table { width: 100%; border-collapse: collapse; }
+.table-wrap th, .table-wrap td {
+  padding: 12px 10px; border-bottom: 1px solid var(--border); text-align: left;
+}
+.table-wrap thead th {
+  color: #cbd5e1; font-weight: 600; background: #0f172a;
+  position: sticky; top: 0;
+}
+.table-wrap a { color: var(--accent); text-decoration: none; }
+.table-wrap a:hover { text-decoration: underline; }
+
+/* 固定列宽，强制按列宽分配 */
+.table-wrap table.gm-table {
+  table-layout: fixed;
+  width: 100%;
+  min-width: 760px; /* 超出就出现横向滚动条 */
 }
 
-/* 避免小屏上文字自行换行把表格撑得难看 */
-.gm-table th,
-.gm-table td {
-  white-space: nowrap;
+/* 列宽分配与换行控制 */
+.gm-table th:nth-child(1),
+.gm-table td:nth-child(1) {  /* 脚本名称 */
+  width: 26%;
+  overflow: hidden; text-overflow: ellipsis;
 }
 
-/* 小屏下禁用粘性表头，避免和横向滚动冲突 */
+.gm-table th:nth-child(2),
+.gm-table td:nth-child(2) {  /* 版本号 */
+  width: 8ch; white-space: nowrap;
+}
+
+.gm-table th:nth-child(3),
+.gm-table td:nth-child(3) {  /* 更新时间 */
+  width: 11ch; white-space: nowrap;
+}
+
+.gm-table th:nth-child(4),
+.gm-table td:nth-child(4),
+.gm-table th:nth-child(5),
+.gm-table td:nth-child(5) {  /* 官方安装 / 镜像链接 */
+  width: 9ch; white-space: nowrap;
+}
+
+/* 说明列：允许换行，完整显示 */
+.gm-table th:nth-child(6),
+.gm-table td:nth-child(6) {
+  width: 28%;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  word-break: break-word;
+}
+/* 防止说明列内部元素带来的强制省略或不换行 */
+.gm-table td:nth-child(6) * {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  -webkit-line-clamp: unset;
+  -webkit-box-orient: unset;
+  display: inline;
+}
+
+/* 链接统一不换行（避免“点击安装”断行） */
+.gm-table a { white-space: nowrap; }
+
+/* 小屏下禁用粘性表头（与横向滚动更兼容） */
 @media (max-width: 600px) {
   .table-wrap thead th { position: static; }
 }
 
-/* 让说明列自动换行，完整显示内容 */
-.gm-table th:nth-child(6),
-.gm-table td:nth-child(6) {
-  white-space: normal !important;  /* 允许换行 */
-  overflow: visible !important;    /* 显示完整内容 */
-  text-overflow: clip !important;  /* 取消省略号 */
-  word-break: break-word;          /* 长单词或英文可自动断行 */
-}
+/* ========== 页脚 ========== */
+.foot { text-align: center; color: var(--muted); margin: 20px 0 10px; font-size: 13px; }
