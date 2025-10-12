@@ -15,26 +15,26 @@ body {
   background: radial-gradient(1200px 600px at 10% 0%, #0f172a 0, #0b0f17 60%);
   color: var(--text);
 }
-/* 居中标题、提示、倒计时文字 */
+/* 合并后的 .card：既有外观，也有居中排布 */
+.card {
+  /* 外观 */
+  background: linear-gradient(180deg, rgba(96,165,250,.07), rgba(96,165,250,.02));
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 18px 16px;
+
+  /* 居中排布 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;      /* 水平居中 */
+  justify-content: center;  /* 垂直居中 */
+  min-height: 120px;        /* 给点高度，才能看出垂直居中效果 */
+}
+
+/* 标题/提示/数字文本居中 */
 .card h2,
 .card .hint,
 .card .countdown {
-  text-align: center;
-}
-
-/* 让卡片内内容整体居中排布 */
-.card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;   /* 水平居中 */
-  justify-content: center; /* 垂直也更居中 */
-}
-
-/* 节日卡片同样居中 */
-.festival-ct {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   text-align: center;
 }
 
