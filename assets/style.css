@@ -127,3 +127,12 @@ body {
 @media (max-width: 600px) {
   .table-wrap thead th { position: static; }
 }
+
+/* 让说明列自动换行，完整显示内容 */
+.gm-table th:nth-child(6),
+.gm-table td:nth-child(6) {
+  white-space: normal !important;  /* 允许换行 */
+  overflow: visible !important;    /* 显示完整内容 */
+  text-overflow: clip !important;  /* 取消省略号 */
+  word-break: break-word;          /* 长单词或英文可自动断行 */
+}
