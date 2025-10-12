@@ -29,6 +29,12 @@
       </div>
     </section>
 
+    <section class="card festival-ct" data-deadline="2025-10-19 00:00:00">
+    <h2>中秋·国庆庆典倒计时</h2>
+    <div class="countdown" data-ct>-- 天 -- 小时 -- 分钟 -- 秒钟</div>
+    </section>
+
+
   <!-- 🆕 商户价格监控 -->
   <section class="notice">
     <p style="
@@ -84,5 +90,43 @@
   </main>
 
   <script src="./assets/app.js"></script>
+
+  <!-- 北京时间活动倒计时 -->
+<script>
+  // 把 "YYYY-MM-DD HH:MM:SS" 当北京时间解析
+  function parseBeijingDateTime(str) {
+    const [datePart, timePart="00:00:00"] = str.trim().split(/\s+/);
+    const [Y, M, D] = datePart.split("-").map(Number);
+    const [h, m, s] = timePart.split(":").map(Number);
+    // UTC 时间 = 北京时间 - 8 小时
+    return new Date(Date.UTC(Y, (M || 1) - 1, D || 1, (h || 0) - 8, m || 0, s || 0));
+  }
+
+  function setupFestivalCountdown(el) {
+    const target = parseBeijingDateTime(el.getAttribute("data-deadline"));
+    const out = el.querySelector("[data-ct]");
+
+    function tick() {
+      const now = new Date();
+      const ms = target - now;
+      if (ms <= 0) {
+        el.remove();
+        clearInterval(timer);
+        return;
+      }
+      const totalSec = Math.floor(ms / 1000);
+      const d = Math.floor(totalSec / 86400);
+      const h = Math.floor((totalSec % 86400) / 3600);
+      const m = Math.floor((totalSec % 3600) / 60);
+      const s = totalSec % 60;
+      out.textContent = `${d}天 ${h}小时 ${m}分钟 ${s}秒钟`;
+    }
+
+    tick();
+    const timer = setInterval(tick, 1000);
+  }
+
+  document.querySelectorAll(".festival-ct[data-deadline]").forEach(setupFestivalCountdown);
+</script>
 </body>
 </html>
