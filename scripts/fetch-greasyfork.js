@@ -10,6 +10,8 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+const GF_OFFICIAL_DOMAIN = 'update.greasyfork.org';
+const GF_MIRROR_DOMAIN   = 'update.gf.qytechs.cn'; 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -70,19 +72,20 @@ function buildInstallUrlsFromPage(page) {
     const url = new URL(page);
     const m = url.pathname.match(/\/scripts\/(\d+)-([^/]+)/);
     if (!m) return { official: '-', mirror: '-' };
+
     const id = m[1];
     const slug = m[2]; // warsoul-battle-monitor
     const fileName = encodeURIComponent(slug.replace(/-/g, ' ')) + '.user.js';
-    const officialRaw = `https://update.greasyfork.org/scripts/${id}/${fileName}`;
-    const mirrorRaw   = `https://update.gf.qytechs.cn/scripts/${id}/${fileName}`;
-    return {
-      official: `https://www.tampermonkey.net/script_installation.php#url=${officialRaw}`,
-      mirror:   `https://www.tampermonkey.net/script_installation.php#url=${mirrorRaw}`,
-    };
+
+    // ✅ 使用上方定义的常量拼接，直接返回 .user.js 源文件链接
+    const official = `https://${GF_OFFICIAL_DOMAIN}/scripts/${id}/${fileName}`;
+    const mirror   = `https://${GF_MIRROR_DOMAIN}/scripts/${id}/${fileName}`;
+
+    return { official, mirror };
   } catch {
     return { official: '-', mirror: '-' };
   }
-}
+} 
 
 // —— 日期规整 —— //
 function dateOnly(s) {

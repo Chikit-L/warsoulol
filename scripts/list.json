@@ -12,6 +12,12 @@
     "desc": "根据怪物血量下降速度，预测是否能按时击败怪物"
   },
   {
+    "name": "WarSoul Daily Tasks",
+    "gf_id": 552855,
+    "page": "https://greasyfork.org/zh-CN/scripts/552855-warsoul-daily-tasks",
+    "desc": "自动完成每日祈福和挑战任务"
+  },
+  {
     "name": "WarSoul AutoBattle",
     "gf_id": 549785,
     "page": "https://greasyfork.org/zh-CN/scripts/549785-warsoul-autobattle",
