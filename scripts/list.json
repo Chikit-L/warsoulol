@@ -11,11 +11,17 @@
     "page": "https://greasyfork.org/zh-CN/scripts/549786-warsoul-battle-monitor",
     "desc": "根据怪物血量下降速度，预测是否能按时击败怪物"
   },
+    {
+    "name": "WarSoul-Tools",
+    "gf_id": 552891,
+    "page": "https://greasyfork.org/zh-CN/scripts/552891-warsoul-tools",
+    "desc": "[作者BKN46](https://github.com/BKN46/WarSoul-Tools)。目前支持：怪物血量变化计算/战斗预测、共斗实际攻速（包含多段攻击）、命中率、暴击率统计、角色装备解析、裸DPS计算、怪物战斗时间预测、自动钓鱼、基于本地存储的装备切换、自动开启组队战斗"
+  },
   {
     "name": "WarSoul Daily Tasks",
     "gf_id": 552855,
     "page": "https://greasyfork.org/zh-CN/scripts/552855-warsoul-daily-tasks",
-    "desc": "自动完成每日祈福和挑战任务"
+    "desc": "自动完成每日祈福和每日挑战"
   },
   {
     "name": "WarSoul AutoBattle",
