@@ -3,7 +3,13 @@
     "name": "WarSoul Helper",
     "gf_id": 548340,
     "page": "https://greasyfork.org/zh-CN/scripts/548340-warsoul-helper",
-    "desc": "为WarSoul游戏中特定装备添加星形图标"
+    "desc": "作者shykai。为WarSoul游戏中特定装备添加星形图标"
+  },
+    {
+    "name": "WarSoul Monster Marker",
+    "gf_id": 553618,
+    "page": "https://greasyfork.org/zh-CN/scripts/553618-warsoul-monster-marker",
+    "desc": "参考WarSoul Helper，为魔物标记添加标记"
   },
     {
     "name": "暗金装备评价",
