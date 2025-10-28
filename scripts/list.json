@@ -41,6 +41,12 @@
     "page": "https://greasyfork.org/zh-CN/scripts/549785-warsoul-autobattle",
     "desc": "为战魂觉醒游戏组队添加自动战斗功能，等待队员加入后自动开始战斗"
   },
+    {
+    "name": "Infinite Challenge",
+    "gf_id": 553955,
+    "page": "https://greasyfork.org/zh-CN/scripts/553955-infinite-challenge",
+    "desc": "对副本进行重复挑战，所有次数消耗完后停止。"
+  },
   {
     "name": "WarSoul Auto-Equip Assistant",
     "gf_id": 550606,
