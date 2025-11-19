@@ -1,4 +1,10 @@
 [
+    {
+    "name": "Battle Simulation",
+    "gf_id": 556283,
+    "page": "https://greasyfork.org/zh-CN/scripts/556283-battle-simulation",
+    "desc": "一键读取装备 / 词条 / 圣物数据；战斗过程模拟；提供 DPS、击杀时间、剩余血量、胜率 等核心数据，并附带战斗日志"
+  },
   {
     "name": "WarSoul Helper",
     "gf_id": 548340,
