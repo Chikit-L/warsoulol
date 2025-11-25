@@ -23,6 +23,12 @@
     "page": "https://greasyfork.org/zh-CN/scripts/553376-darkgold-rating",
     "desc": "自动识别暗金装备流派、计算评分。"
   },
+    {
+    "name": "WarSoul Market Oracle",
+    "gf_id": 556857,
+    "page": "https://greasyfork.org/zh-CN/scripts/556857-warsoul-market-oracle",
+    "desc": "在商会中为每个商户提供历史走势和近30日趋势图 + 投资报告"
+  },
   {
     "name": "WarSoul Battle Monitor",
     "gf_id": 549786,
